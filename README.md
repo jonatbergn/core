@@ -1,5 +1,8 @@
 # Core
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7f1c74dbec914bbd8f6840602faa5a91)](https://www.codacy.com/gh/jonatbergn/core/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jonatbergn/core&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/7f1c74dbec914bbd8f6840602faa5a91)](https://www.codacy.com/gh/jonatbergn/core/dashboard?utm_source=github.com&utm_medium=referral&utm_content=jonatbergn/core&utm_campaign=Badge_Coverage)
+
 Classes for building [Kotlin Multiplatform Mobile](https://kotlinlang.org/lp/mobile/) apps based
 on **unidirectional-data-flow** pattern
 using [flows](https://kotlinlang.org/docs/reference/coroutines/flow.html#flows)
