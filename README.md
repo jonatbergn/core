@@ -20,7 +20,7 @@ For use case error handling check out [core-exceptions](https://github.com/jonat
 
 ## Sample App
 
-The app lists game of throne houses using [anapioficeandfire](https://anapioficeandfire.com/).
+The [app](https://github.com/jonatbergn/core/tree/trunk/samples/iceandfire/app) lists game of throne houses using [anapioficeandfire](https://anapioficeandfire.com/).
 
 🕸️ **Run on browser**: `./gradlew iceandfireWeb`
 
