@@ -1,0 +1,23 @@
+-dontobfuscate
+
+-keepattributes *Annotation*, InnerClasses
+
+
+# kotlinx-serialization
+-dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+-keep,includedescriptorclasses class com.jonatbergn.core.****$$serializer { *; }
+-keepclassmembers class com.jonatbergn.core.**** {
+    *** Companion;
+}
+-keepclasseswithmembers class com.jonatbergn.core.**** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+# okhttp
+-keepclasseswithmembers class io.grpc.okhttp.** { *; }
