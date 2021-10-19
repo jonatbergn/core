@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 class Model<State>(
     scope: CoroutineScope,
     initialState: State,
-    useCases: List<UseCase<out Any>>,
+    useCases: List<UseCase<*>>,
     reducers: List<(State, Any) -> State>,
 ) {
 
