@@ -1,7 +1,6 @@
 package com.jonatbergn.core.iceandfire.app
 
 import com.jonatbergn.core.exception.async
-import com.jonatbergn.core.exception.withExceptionHandling
 import com.jonatbergn.core.iceandfire.app.api.ApiDto
 import com.jonatbergn.core.iceandfire.app.api.asApi
 import com.jonatbergn.core.iceandfire.app.character.Character
@@ -105,9 +104,17 @@ internal class IceAndFireContextImpl(
         scope,
         State(),
         useCases = listOf(
-            ObserveHouses(houseRepo),
-            LoadNextHouses(houseRepo).withExceptionHandling { retryWhen(retry) },
-            LoadDetailedHouse(houseRepo).withExceptionHandling { retryWhen(retry) },
+            ObserveHouses(
+                repo = houseRepo
+            ),
+            LoadNextHouses(
+                retry = retry,
+                repo = houseRepo
+            ),
+            LoadDetailedHouse(
+                retry = retry,
+                repo = houseRepo
+            ),
         ),
         reducers = listOf(
             ObserveHouses.reducer,

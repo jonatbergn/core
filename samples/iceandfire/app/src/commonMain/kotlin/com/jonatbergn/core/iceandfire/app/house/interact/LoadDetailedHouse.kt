@@ -11,7 +11,13 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 
-class LoadDetailedHouse(repo: Repo<House>) : LoadDetailedEntity(repo) {
+class LoadDetailedHouse(
+    retry: suspend (Throwable, Long) -> Boolean,
+    repo: Repo<House>,
+) : LoadDetailedEntity(
+    retry,
+    repo,
+) {
 
     override fun Flow<*>.filter() = filterIsInstance<LoadDetailedHouseAction>()
     override suspend fun SendChannel<Any>.onInFlight() = send(InFlight)

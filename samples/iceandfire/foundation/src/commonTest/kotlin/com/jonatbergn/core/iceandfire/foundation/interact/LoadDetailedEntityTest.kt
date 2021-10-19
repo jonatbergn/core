@@ -29,7 +29,10 @@ class LoadDetailedEntityTest : BaseTest() {
     fun interaction() = runTest {
         val url = "foobar"
         val repo = MockRepo<MockEntity>()
-        val events = object : LoadDetailedEntity(repo) {
+        val events = object : LoadDetailedEntity(
+            retry = { _, _ -> false },
+            repo = repo
+        ) {
             override fun Flow<*>.filter() = filterIsInstance<Action>()
             override suspend fun SendChannel<Any>.onInFlight() = send(InFlight)
             override suspend fun SendChannel<Any>.onComplete() = send(Completed)

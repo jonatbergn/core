@@ -14,7 +14,13 @@ import kotlinx.coroutines.flow.filterIsInstance
 /**
  * Use case to load the next page of houses, if such page exists
  */
-class LoadNextHouses(repo: Repo<House>) : LoadNextPage<LoadNextHousesAction>(repo) {
+class LoadNextHouses(
+    retry: suspend (Throwable, Long) -> Boolean,
+    repo: Repo<House>,
+) : LoadNextPage<LoadNextHousesAction>(
+    retry,
+    repo,
+) {
 
     override fun Flow<*>.filter() = filterIsInstance<LoadNextHousesAction>()
     override suspend fun SendChannel<Any>.onInFlight() = send(InFlight)

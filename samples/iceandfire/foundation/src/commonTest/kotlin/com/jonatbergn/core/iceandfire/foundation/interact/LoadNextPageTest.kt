@@ -28,7 +28,10 @@ class LoadNextPageTest : BaseTest() {
     @Test
     fun interaction() = runTest {
         val repo = MockRepo<MockEntity>()
-        val events = object : LoadNextPage<Action>(repo) {
+        val events = object : LoadNextPage<Action>(
+            retry = { _, _ -> false },
+            repo = repo,
+        ) {
             override fun Flow<*>.filter() = filterIsInstance<Action>()
             override suspend fun SendChannel<Any>.onInFlight() = send(InFlight)
             override suspend fun SendChannel<Any>.onComplete() = send(Completed)
