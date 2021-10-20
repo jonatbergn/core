@@ -8,14 +8,62 @@ on **unidirectional-data-flow** pattern
 using [flows](https://kotlinlang.org/docs/reference/coroutines/flow.html#flows)
 and [coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html).
 
-## Architecture Overview
+## Overview
 
-The framework exposes
-a [Model](https://github.com/jonatbergn/core/blob/trunk/core/src/commonMain/kotlin/com/jonatbergn/core/model/Model.kt)
-as its single API to be consumed by apps:
+### [Model](https://github.com/jonatbergn/core/blob/trunk/core/src/commonMain/kotlin/com/jonatbergn/core/model/Model.kt)
 
+```kotlin
+class Model<State>(
+    scope: CoroutineScope,
+    initialState: State,
+    useCases: List<UseCase<*>>,
+    reducers: List<(State, Any) -> State>,
+) {
+
+    val actions: MutableSharedFlow<Any> = MutableSharedFlow(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = DROP_OLDEST
+    )
+    private val events = useCases.map { it.interactWith(actions) }
+        .merge()
+        .shareIn(scope, Eagerly)
+
+    val states: StateFlow<State> = events
+        .scan(initialState) { s, event -> reducers.fold(s) { s1, reduce -> reduce(s1, event) } }
+        .stateIn(scope, Eagerly, initialState)
+}
+```
 :arrow_upper_left: [publish actions](https://github.com/jonatbergn/core/blob/trunk/core/src/commonMain/kotlin/com/jonatbergn/core/model/Model.kt#L24)
 :arrow_lower_right: [consume states](https://github.com/jonatbergn/core/blob/trunk/core/src/commonMain/kotlin/com/jonatbergn/core/model/Model.kt#L33)
+
+### [UseCase](https://github.com/jonatbergn/core/blob/trunk/core/src/commonMain/kotlin/com/jonatbergn/core/interact/UseCase.kt)
+
+```kotlin
+interface UseCase<Action> {
+
+    fun Flow<*>.filter(): Flow<Action>
+
+    suspend fun interactOn(action: Action): Flow<Any>
+
+    companion object {
+        fun <T> UseCase<T>.interactWith(actions: Flow<*>): Flow<Any> = actions
+            .filter()
+            .flatMapLatest(::interactOn)
+    }
+}
+```
+⚙️ [interact](https://github.com/jonatbergn/core/blob/trunk/core/src/commonMain/kotlin/com/jonatbergn/core/interact/UseCase.kt#L12) on received actions and emit events
+
+### [Reducer](https://github.com/jonatbergn/core/blob/trunk/core/src/commonMain/kotlin/com/jonatbergn/core/interact/Reducer.kt)
+
+```kotlin
+nline fun <reified State, reified Event> reducer(
+    crossinline reduce: State.(Event) -> State,
+): (State, Any) -> State = { state, event -> if (event is Event) state.reduce(event) else state }
+```
+
+🔄 [reduce](https://github.com/jonatbergn/core/blob/trunk/core/src/commonMain/kotlin/com/jonatbergn/core/model/Model.kt#L34) state on each event
 
 ## Error handling 
 
