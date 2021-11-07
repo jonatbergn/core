@@ -31,7 +31,7 @@ object Dependencies {
             }
 
             object DateTime {
-                private const val version = "0.3.0"
+                private const val version = "0.3.1"
                 const val dateTime = "$group:kotlinx-datetime:$version"
             }
         }
@@ -83,20 +83,20 @@ object Dependencies {
 
         object Compose {
             private const val group = "androidx.compose"
-            const val version = "1.0.4"
+            const val version = "1.0.5"
             const val ui = "$group.ui:ui:$version"
             const val uiTooling = "$group.ui:ui-tooling:$version"
             const val material = "$group.material:material:$version"
         }
 
         object Navigation {
-            const val compose = "androidx.navigation:navigation-compose:2.4.0-alpha10"
+            const val compose = "androidx.navigation:navigation-compose:2.4.0-beta02"
         }
     }
 
     object Ktor {
         private const val group = "io.ktor"
-        private const val version = "1.6.4"
+        private const val version = "1.6.5"
         const val core = "$group:ktor-client-core:$version"
         const val json = "$group:ktor-client-json:$version"
         const val okhttp = "$group:ktor-client-okhttp:${version}"
@@ -119,7 +119,7 @@ object Dependencies {
 
     object CashApp {
         object Turbine {
-            val turbine = "app.cash.turbine:turbine:0.6.1"
+            val turbine = "app.cash.turbine:turbine:0.7.0"
         }
     }
 

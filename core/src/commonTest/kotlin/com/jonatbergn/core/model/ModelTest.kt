@@ -12,8 +12,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Unconfined
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.launch
@@ -63,5 +66,40 @@ class ModelTest : BaseTest() {
         val job3 = launch { model.states.take(1).toCollection(statesThree) }
         withTimeout(Duration.seconds(5)) { job3.join() }
         assertEquals(listOf(State("init,a,b")), statesThree)
+    }
+
+    /**
+     * A use case might emit effects immediately once they are hooked to the upstream
+     * even without receiving an action from the upstream.
+     *
+     * Consider the following example:
+     * ```
+     * class MyUseCase : UseCase<Action>() {
+     *   override fun Flow<*>.filter() = flowOf(Action())
+     *   override suspend fun interactOn(action: Action) = flowOf(Effect())
+     * }
+     * ```
+     * Eventually effects will be emitted before any collectors observe the downstream.
+     * The model needs to replay all these effects and must make sure they do not get
+     * lost.
+     */
+    @Test
+    fun onHotUseCase_whichExecutesImmediately_StateGetsReducedCorrectly() = runTest {
+        val initialState = "initial"
+        val effects = (0..256).map { "effect$it" }
+        val expectedState = (listOf(initialState) + effects).joinToString(",")
+        Model(
+            scope = CoroutineScope(Unconfined),
+            initialState = initialState,
+            useCases = listOf(object : UseCase<String> {
+                override fun Flow<*>.filter() = flowOf("action")
+                override suspend fun interactOn(action: String) = flowOf(*effects.toTypedArray())
+            }),
+            reducers = listOf(reducer<String, String> { "$this,$it" }),
+        )
+            .states
+            // verify we get the most recent state
+            .filter { it == expectedState }
+            .first()
     }
 }
