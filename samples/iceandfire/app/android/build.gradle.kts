@@ -6,6 +6,7 @@ dependencies {
     implementation(project(":samples:iceandfire:app"))
     implementation(Dependencies.Jetbrains.KotlinX.Coroutines.android)
     implementation(Dependencies.Jetpack.AppCompat.appcompat)
+    implementation(platform(Dependencies.Jetpack.Compose.bom))
     implementation(Dependencies.Jetpack.Compose.ui)
     implementation(Dependencies.Jetpack.Compose.uiTooling)
     implementation(Dependencies.Jetpack.Compose.material)
@@ -15,9 +16,7 @@ dependencies {
 }
 android {
     lint {
-        // this is a temporary hack,
-        // since google maps pulls in old fragment dependencies
-        isAbortOnError = false
+        abortOnError = false
         // no idea why, but this is needed. should try to remove it from time to time.
         disable.add("DialogFragmentCallbacksDetector")
     }
@@ -43,7 +42,7 @@ android {
     }
     buildFeatures { compose = true }
     composeOptions {
-        kotlinCompilerExtensionVersion = Dependencies.Jetpack.Compose.version
+        kotlinCompilerExtensionVersion = "1.3.2"
     }
     testOptions {
         unitTests {

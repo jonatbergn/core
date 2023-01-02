@@ -3,7 +3,7 @@ object Dependencies {
     object Jetbrains {
         object Kotlin {
             const val group = "org.jetbrains.kotlin"
-            const val version = "1.5.31"
+            const val version = "1.7.20"
 
             object Plugin {
                 const val gradle = "$group:kotlin-gradle-plugin:$version"
@@ -20,18 +20,18 @@ object Dependencies {
             private const val group = "org.jetbrains.kotlinx"
 
             object Coroutines {
-                const val version = "1.5.2"
+                const val version = "1.6.4"
                 const val core = "$group:kotlinx-coroutines-core:$version"
                 const val android = "$group:kotlinx-coroutines-android:$version"
             }
 
             object Serialization {
-                private const val version = "1.3.0"
+                private const val version = "1.4.1"
                 const val json = "$group:kotlinx-serialization-json:$version"
             }
 
             object DateTime {
-                private const val version = "0.3.1"
+                private const val version = "0.4.0"
                 const val dateTime = "$group:kotlinx-datetime:$version"
             }
         }
@@ -50,14 +50,14 @@ object Dependencies {
 
     object Android {
 
-        const val version = "7.0.3"
+        const val version = "7.3.0"
 
         object TargetSdk {
-            const val version = 31
+            const val version = 33
         }
 
         object CompileSdk {
-            const val version = 31
+            const val version = 33
         }
 
         object MinSdk {
@@ -65,7 +65,7 @@ object Dependencies {
         }
 
         object BuildTools {
-            const val version = "30.0.2"
+            const val version = "33.0.0"
         }
 
         object Plugin {
@@ -82,11 +82,13 @@ object Dependencies {
         }
 
         object Compose {
+            //todo use bom
             private const val group = "androidx.compose"
-            const val version = "1.0.5"
-            const val ui = "$group.ui:ui:$version"
-            const val uiTooling = "$group.ui:ui-tooling:$version"
-            const val material = "$group.material:material:$version"
+
+            const val bom = "androidx.compose:compose-bom:2022.12.00"
+            const val ui = "$group.ui:ui"
+            const val uiTooling = "$group.ui:ui-tooling"
+            const val material = "$group.material:material"
         }
 
         object Navigation {
