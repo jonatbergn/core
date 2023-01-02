@@ -45,3 +45,4 @@ Packages/
 Package.pins
 Package.resolved
 /Pods
+/kotlin-js-store/yarn.lock
