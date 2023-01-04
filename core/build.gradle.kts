@@ -12,13 +12,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(Dependencies.Jetbrains.KotlinX.Coroutines.core)
-                api(Dependencies.Jetbrains.KotlinX.DateTime.dateTime)
-            }
-        }
-        val commonTest by getting {
-            dependencies {
-                implementation(project(":core:test"))
+                api(libs.kotlinx.coroutines.core)
+                api(libs.kotlinx.time)
             }
         }
     }

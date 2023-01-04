@@ -9,5 +9,5 @@ class MockRemote<T : Entity>(
     var onGetMany: suspend (String) -> Page<T> = { throw NotImplementedError() },
 ) : Remote<T> {
     override suspend fun getOne(url: String) = onGetOne(url)
-    override suspend fun getMany(url: String) = onGetMany(url)
+    override suspend fun getPage(url: String) = onGetMany(url)
 }

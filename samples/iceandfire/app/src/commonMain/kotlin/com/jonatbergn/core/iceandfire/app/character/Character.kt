@@ -1,8 +1,8 @@
 package com.jonatbergn.core.iceandfire.app.character
 
 import com.jonatbergn.core.iceandfire.app.house.House
-import com.jonatbergn.core.iceandfire.foundation.entity.Dependent
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 
 /**
  * Character data for the _ice and fire api_
@@ -23,8 +23,11 @@ data class Character(
     val povBooks: List<String>?,
     val tvSeries: List<String>?,
     val playedBy: List<String>?,
-    val father: Dependent<Character>,
-    val mother: Dependent<Character>,
-    val spouse: Dependent<Character>,
-    val allegiances: List<Dependent<House>>,
+    //characters
+    val father: Pointer<Character>?,
+    val mother: Pointer<Character>?,
+    val spouse: Pointer<Character>?,
+
+    //houses
+    val allegiances: List<Pointer<House>>?,
 ) : Entity

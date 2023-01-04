@@ -1,27 +1,35 @@
 package com.jonatbergn.core.iceandfire.foundation.mock.repo
 
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity
-import com.jonatbergn.core.iceandfire.foundation.entity.PageCollection
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Companion.pointer
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
+import com.jonatbergn.core.iceandfire.foundation.entity.Page
 import com.jonatbergn.core.iceandfire.foundation.entity.Repo
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 
 class MockRepo<T : Entity>(
-    private val pages: Flow<PageCollection<T>> = emptyFlow(),
+    val onHasMorePagesToFetch: () -> Boolean = { false },
+    val onFetchNextPage: suspend () -> Page<T> = { throw NotImplementedError() },
+    val onFetch: suspend (Pointer<T>) -> T = { throw NotImplementedError() },
+    override var entities: PersistentMap<Pointer<T>, T> = persistentMapOf()
 ) : Repo<T> {
 
-    var fetchNextPageInvocations = 0
-        private set
-    var fetchOneInvocations = emptyList<String>()
-        private set
+    override var pages: PersistentList<Page<T>> = persistentListOf()
 
-    override fun observePages() = pages
+    override val hasMorePagesToFetch get() = onHasMorePagesToFetch()
 
     override suspend fun fetchNextPage() {
-        fetchNextPageInvocations++
+        val page = onFetchNextPage()
+        pages = pages.add(page)
+        page.forEach { entities = entities.put(it.pointer, it) }
     }
 
-    override suspend fun fetchOne(url: String) {
-        fetchOneInvocations = fetchOneInvocations + url
+    override suspend fun fetch(pointer: Pointer<T>): T {
+        val entity = onFetch(pointer)
+        entities = entities.put(pointer, entity)
+        return entity
     }
 }

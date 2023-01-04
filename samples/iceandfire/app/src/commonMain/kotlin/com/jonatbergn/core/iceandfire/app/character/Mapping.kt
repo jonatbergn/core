@@ -1,7 +1,6 @@
 package com.jonatbergn.core.iceandfire.app.character
 
-import com.jonatbergn.core.iceandfire.foundation.entity.Dependent.Companion.asDependent
-import com.jonatbergn.core.iceandfire.foundation.entity.Dependent.Companion.asDependents
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 
 val CharacterDto.asCharacter: Character
     get() = Character(
@@ -17,10 +16,10 @@ val CharacterDto.asCharacter: Character
         povBooks = povBooks,
         tvSeries = tvSeries,
         playedBy = playedBy,
-        father = father.asDependent(),
-        mother = mother.asDependent(),
-        spouse = spouse.asDependent(),
-        allegiances = allegiances.asDependents(),
+        father = Pointer(father),
+        mother = Pointer(mother),
+        spouse = Pointer(spouse),
+        allegiances = Pointer(allegiances),
     )
 
 val List<CharacterDto>.asCharacterList

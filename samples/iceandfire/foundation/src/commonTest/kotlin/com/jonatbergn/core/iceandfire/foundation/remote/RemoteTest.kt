@@ -1,12 +1,11 @@
 package com.jonatbergn.core.iceandfire.foundation.remote
 
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
-import com.jonatbergn.core.test.BaseTest
+import io.kotest.common.runBlocking
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respondError
 import io.ktor.client.engine.mock.respondOk
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,12 +13,10 @@ import kotlin.test.assertFails
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
-class RemoteTest : BaseTest() {
-
-    private val contentType = ContentType.parse("application/json")
+class RemoteTest {
 
     @Test
-    fun testRemoteCalls() = runTest {
+    fun testRemoteCalls() = runBlocking {
         val remote = RemoteImpl(
             HttpClient(MockEngine) {
                 engine {
@@ -33,7 +30,6 @@ class RemoteTest : BaseTest() {
                     }
                 }
             },
-            contentType,
             { "get-one/$this" },
             { listOf("get-many/$this") }
         )
@@ -45,7 +41,7 @@ class RemoteTest : BaseTest() {
                 listOf("get-many/bird"),
                 null
             ),
-            remote.getMany("http://localhost/bird")
+            remote.getPage("http://localhost/bird")
         )
     }
 

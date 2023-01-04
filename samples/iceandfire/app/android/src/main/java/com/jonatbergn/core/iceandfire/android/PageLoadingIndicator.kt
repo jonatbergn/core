@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun PageLoadingIndicator(
     isLoadPageInFlight: Boolean,
-    isMorePagesAvailable: Boolean,
+    isMorePagesAvailable: Boolean?,
 ) {
     Row(
         Modifier
@@ -39,7 +39,7 @@ fun PageLoadingIndicator(
                         .size(16.dp),
                     MaterialTheme.colors.primary
                 )
-            } else if (isMorePagesAvailable) {
+            } else if (isMorePagesAvailable == false) {
                 Box(
                     Modifier
                         .size(5.dp)

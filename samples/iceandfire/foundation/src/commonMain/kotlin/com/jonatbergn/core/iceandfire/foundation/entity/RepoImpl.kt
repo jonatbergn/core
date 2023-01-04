@@ -1,40 +1,50 @@
 package com.jonatbergn.core.iceandfire.foundation.entity
 
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 import com.jonatbergn.core.iceandfire.foundation.local.Local
 import com.jonatbergn.core.iceandfire.foundation.remote.Remote
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.invoke
 
 /**
  *
  * @param scope the scope used to asynchronously fetch gross depending data
  * @param remote the [Remote] instance which will be used to retrieve remote entities
  * @param local the [Local] instance which will be used to retrieve local entities
- * @param fetchGross a [FetchDependents] instance for gross [Dependent] data. Gross data will be fetched,
  * whenever a new entity got fetched using [fetchNextPage]
- * @param fetchDetails a [FetchDependents] instance for detailed [Dependent] data. Detail data will be fetched,
- * whenever a single entity gets fetched using [fetchOne]
+ * whenever a single entity gets fetched using [fetch]
  */
 class RepoImpl<T : Entity>(
-    private val scope: CoroutineScope,
-    private val remote: Remote<T>,
+    private val dispatcher: CoroutineDispatcher,
     private val local: Local<T>,
-    private val fetchGross: FetchDependents<T>,
-    private val fetchDetails: FetchDependents<T>,
+    private val remote: Remote<T>,
     private val first: suspend () -> String,
-) : Repo<T> {
+) : Repo<T>, Map<Pointer<T>, T> by local.all {
 
-    override fun observePages() = local.pageFlow
-    override suspend fun fetchNextPage() {
-        val pages = local.pageFlow.value
-        val last = pages.lastOrNull()
-        if (!pages.isEmpty && last?.next == null) return
-        val next = remote.getMany(last?.next ?: first()).also { local.put(it) }
-        scope.launch { next.data.map { fetchGross(it) }.flatten().awaitAll() }
+    override val entities by local::all
+
+    override val pages get() = local.pages?.toImmutableList()
+
+    override val hasMorePagesToFetch
+        get() = when (val pages = local.pages) {
+            null -> true
+            else -> pages.last().next != null
+        }
+
+    override suspend fun fetchNextPage(): Unit = dispatcher {
+        when (val pages = local.pages) {
+            null -> remote.getPage(first())
+            else -> when (val next = pages.last().next) {
+                null -> null
+                else -> remote.getPage(next)
+            }
+        }?.also(local::put)
     }
 
-    override suspend fun fetchOne(url: String) {
-        fetchDetails(local.get(url) ?: remote.getOne(url).also { local.put(it) }).awaitAll()
+    override suspend fun fetch(pointer: Pointer<T>) = dispatcher {
+        local[pointer.url] ?: remote.getOne(pointer.url).also(local::put)
     }
+
+    override fun get(pointer: Pointer<T>) = local[pointer.url]
 }

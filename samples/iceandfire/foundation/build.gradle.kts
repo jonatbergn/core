@@ -1,6 +1,5 @@
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization")
 }
 kotlin {
     targets {
@@ -14,18 +13,18 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":core"))
-                api(project(":core:exception"))
-                implementation(Dependencies.Jetbrains.KotlinX.Serialization.json)
-                implementation(Dependencies.Ktor.core)
+                api(libs.kotlinx.serialization.json)
+                api(libs.kotlinx.collections.immutable)
+                implementation(libs.bundles.ktorClientCommon)
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(project(":samples:iceandfire:foundation:mock"))
-                implementation(Dependencies.Jetbrains.Kotlin.Test.junit)
-                implementation(Dependencies.Jetbrains.Kotlin.Test.common)
-                implementation(Dependencies.Jetbrains.Kotlin.Test.annotations)
-                implementation(Dependencies.Ktor.mock)
+                implementation(libs.bundles.testCommon)
+                implementation(libs.kotlin.test.junit)
+                implementation(libs.ktor.client.mock)
+                implementation(libs.turbine)
             }
         }
     }

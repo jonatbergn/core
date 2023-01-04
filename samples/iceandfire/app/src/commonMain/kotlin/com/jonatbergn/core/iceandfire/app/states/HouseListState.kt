@@ -1,11 +1,9 @@
 package com.jonatbergn.core.iceandfire.app.states
 
-import com.jonatbergn.core.iceandfire.app.State
+import kotlinx.collections.immutable.ImmutableList
 
 data class HouseListState(
-    val state: State,
-) {
-    val houses = state.houses?.flatMap { it.data }?.map(::HouseGrossState)
-    val isMoreHousesAvailable = state.houses?.isEnd != false
-    val loadNextHousesInFlight = state.loadNextHousesInFlight
-}
+    val houses: ImmutableList<HouseGrossState>,
+    val isMoreHousesAvailable: Boolean?,
+    val loadNextHousesInFlight: Boolean,
+)

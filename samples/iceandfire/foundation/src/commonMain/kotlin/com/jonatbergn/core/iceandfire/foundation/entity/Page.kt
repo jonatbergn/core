@@ -1,5 +1,7 @@
 package com.jonatbergn.core.iceandfire.foundation.entity
 
+import kotlinx.collections.immutable.ImmutableList
+
 /**
  * An entry of linked page data
  *
@@ -9,6 +11,6 @@ package com.jonatbergn.core.iceandfire.foundation.entity
  */
 data class Page<T>(
     val url: String,
-    val data: List<T>,
     val next: String?,
-)
+    private val data: ImmutableList<T>,
+) : ImmutableList<T> by data

@@ -6,9 +6,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="false"
-        android:label="IceAndFire"
-        android:theme="@style/AppTheme">
+            android:name=".App"
+            android:allowBackup="false"
+            android:label="IceAndFire"
+            android:usesCleartextTraffic="true"
+            android:theme="@style/AppTheme">
         <activity
             android:name=".Activity"
             android:exported="true">

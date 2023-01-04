@@ -1,8 +1,8 @@
 package com.jonatbergn.core.iceandfire.app.house
 
 import com.jonatbergn.core.iceandfire.app.character.Character
-import com.jonatbergn.core.iceandfire.foundation.entity.Dependent
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 
 /**
  * House data for the _ice and fire api_
@@ -21,10 +21,14 @@ data class House(
     val founded: String?,
     val diedOut: String?,
     val ancestralWeapons: List<String>?,
-    val heir: Dependent<Character>,
-    val currentLord: Dependent<Character>,
-    val founder: Dependent<Character>,
-    val swornMembers: List<Dependent<Character>>,
-    val overlord: Dependent<House>,
-    val cadetBranches: List<Dependent<House>>,
+
+    // characters
+    val heir: Pointer<Character>?,
+    val currentLord: Pointer<Character>?,
+    val founder: Pointer<Character>?,
+    val swornMembers: List<Pointer<Character>>?,
+
+    // houses
+    val overlord: Pointer<House>?,
+    val cadetBranches: List<Pointer<House>>?,
 ) : Entity

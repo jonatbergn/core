@@ -1,7 +1,5 @@
 package com.jonatbergn.core.iceandfire.app.api
 
-import kotlin.test.Test
-
 class ApiDtoTest {
 
     private val decoded = ApiDto(
@@ -17,7 +15,7 @@ class ApiDtoTest {
         }
     """.trimIndent()
 
-    @Test
+//    @Test
     fun serialization() {
         //TODO
 //        verifyJson(decoded, encoded) {

@@ -1,18 +1,18 @@
 plugins {
-    id(Dependencies.Android.Plugin.application)
+    id("com.android.application")
     kotlin("android")
 }
 dependencies {
     implementation(project(":samples:iceandfire:app"))
-    implementation(Dependencies.Jetbrains.KotlinX.Coroutines.android)
-    implementation(Dependencies.Jetpack.AppCompat.appcompat)
-    implementation(platform(Dependencies.Jetpack.Compose.bom))
-    implementation(Dependencies.Jetpack.Compose.ui)
-    implementation(Dependencies.Jetpack.Compose.uiTooling)
-    implementation(Dependencies.Jetpack.Compose.material)
-    implementation(Dependencies.Jetpack.Navigation.compose)
-    implementation(Dependencies.Ktor.okhttp)
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    implementation(enforcedPlatform(libs.androidx.compose.bom))
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.uiTooling)
+    implementation(libs.androidx.navigation.copose)
+    implementation(libs.ktor.client.okhttp)
+    coreLibraryDesugaring(libs.android.tools.desugarJdk)
 }
 android {
     lint {
@@ -22,12 +22,12 @@ android {
     }
     defaultConfig {
         applicationId = "com.jonatbergn.iceandfire"
-        minSdk = Dependencies.Android.MinSdk.version
-        targetSdk = Dependencies.Android.TargetSdk.version
+        minSdkPreview = libs.versions.android.build.sdk.min.get()
+        targetSdkPreview = libs.versions.android.build.target.get()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildToolsVersion = Dependencies.Android.BuildTools.version
-    compileSdk = Dependencies.Android.CompileSdk.version
+    buildToolsVersion = libs.versions.android.build.tools.get()
+    compileSdkVersion = libs.versions.android.build.sdk.compile.get()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

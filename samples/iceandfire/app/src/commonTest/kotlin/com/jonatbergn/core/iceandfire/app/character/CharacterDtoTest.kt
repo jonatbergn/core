@@ -1,7 +1,5 @@
 package com.jonatbergn.core.iceandfire.app.character
 
-import kotlin.test.Test
-
 class CharacterDtoTest {
 
     private val encoded = """
@@ -53,7 +51,7 @@ class CharacterDtoTest {
         playedBy = listOf(""),
     )
 
-    @Test
+//    @Test
     fun serialization() {
         //TODO
 //        verifyJson(decoded, encoded) {

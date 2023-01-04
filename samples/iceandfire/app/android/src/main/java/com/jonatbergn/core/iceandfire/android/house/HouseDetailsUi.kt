@@ -22,31 +22,35 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import com.jonatbergn.core.iceandfire.android.App.Companion.store
 import com.jonatbergn.core.iceandfire.android.Chip
-import com.jonatbergn.core.iceandfire.app.State
-import com.jonatbergn.core.iceandfire.app.State.Companion.detail
+import com.jonatbergn.core.iceandfire.app.AppStore
+import com.jonatbergn.core.iceandfire.app.house.House
 import com.jonatbergn.core.iceandfire.app.states.HouseDetailsState
-import com.jonatbergn.core.model.Model
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 
 @Composable
 fun HouseDetailsUi(
-    model: Model<State>,
-    url: String,
+    house: Pointer<House>,
     onNavigateBack: () -> Unit,
+    store: AppStore = LocalContext.current.store,
 ) {
+    LaunchedEffect(Unit) { store.loadHouseDetails(house) }
     HouseDetailsUi(
-        state = model.states.collectAsState().value.detail(url = url),
-        onNavigateBack = onNavigateBack
+        state = store.state.collectAsState().value.detailedHouse(house),
+        onNavigateBack = onNavigateBack,
     )
 }
 
 @Composable
-fun HouseDetailsUi(
+internal fun HouseDetailsUi(
     state: HouseDetailsState,
     onNavigateBack: () -> Unit,
 ) {
@@ -65,7 +69,9 @@ fun HouseDetailsUi(
             )
         }
     ) {
-        Column {
+        Column(
+            modifier = Modifier.padding(it),
+        ) {
             Column(
                 Modifier
                     .padding(16.dp)

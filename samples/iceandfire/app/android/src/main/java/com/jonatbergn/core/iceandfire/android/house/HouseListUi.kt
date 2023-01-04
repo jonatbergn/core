@@ -15,15 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.jonatbergn.core.iceandfire.android.App.Companion.store
 import com.jonatbergn.core.iceandfire.android.PageLoadingIndicator
-import com.jonatbergn.core.iceandfire.app.State
-import com.jonatbergn.core.iceandfire.app.State.Companion.list
-import com.jonatbergn.core.iceandfire.app.house.interact.LoadNextHousesAction
+import com.jonatbergn.core.iceandfire.app.AppStore
 import com.jonatbergn.core.iceandfire.app.states.HouseGrossState
 import com.jonatbergn.core.iceandfire.app.states.HouseListState
-import com.jonatbergn.core.model.Model
+import kotlinx.coroutines.launch
 
 @Composable
 private fun HouseListItem(
@@ -38,16 +39,16 @@ private fun HouseListItem(
 
 @Composable
 fun HouseListUi(
-    model: Model<State>,
     onSelectHouseUrl: (String) -> Unit,
+    store: AppStore = LocalContext.current.store,
 ) {
+    val scope = rememberCoroutineScope()
     HouseListUi(
-        state = model.states.collectAsState().value.list(),
-        onLoadNext = { model.actions.tryEmit(LoadNextHousesAction) },
-        onSelectHouseUrl = onSelectHouseUrl
+        state = store.state.collectAsState().value.grossHouseList(),
+        onLoadNext = { scope.launch { store.loadNextHousePage() } },
+        onSelectHouseUrl = onSelectHouseUrl,
     )
 }
-
 
 /**
  * Displays [state] house date in a vertical list.
@@ -63,24 +64,27 @@ fun HouseListUi(
     val listState = rememberLazyListState()
     with(listState.layoutInfo) {
         val reachedEnd = visibleItemsInfo.any { it.index == totalItemsCount - 1 }
-        if (reachedEnd && totalItemsCountWhenFetched.value < totalItemsCount && !isMoreHousesAvailable) {
+        if (reachedEnd && totalItemsCountWhenFetched.value < totalItemsCount && isMoreHousesAvailable == true) {
             totalItemsCountWhenFetched.value = totalItemsCount
             onLoadNext()
         }
     }
     Scaffold(topBar = { TopAppBar(title = { Text("Houses of Westeros") }) }) {
-        LazyColumn(state = listState) {
+        LazyColumn(
+            modifier = Modifier.padding(it),
+            state = listState,
+        ) {
             item { Spacer(Modifier.height(16.dp)) }
-            items(houses.orEmpty()) {
+            items(houses) { item ->
                 HouseListItem(
-                    state = it,
-                    onSelectUrl = onSelectHouseUrl
+                    state = item,
+                    onSelectUrl = onSelectHouseUrl,
                 )
             }
             item {
                 PageLoadingIndicator(
                     isLoadPageInFlight = loadNextHousesInFlight,
-                    isMorePagesAvailable = !isMoreHousesAvailable
+                    isMorePagesAvailable = isMoreHousesAvailable,
                 )
             }
         }

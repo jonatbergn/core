@@ -22,7 +22,7 @@ fun HouseGrossUi(
     Column(
         Modifier
             .fillMaxWidth()
-            .clickable(onClick = { onSelectUrl(state.house.url) })
+            .clickable { onSelectUrl(state.url) }
             .padding(horizontal = 8.dp)
     ) {
         Column(
@@ -30,8 +30,10 @@ fun HouseGrossUi(
                 .height(28.dp),
             verticalArrangement = Arrangement.Bottom
         ) {
-            Text(style = typography.overline,
-                text = state.lordName)
+            Text(
+                style = typography.overline,
+                text = state.lordName
+            )
         }
         Column(
             Modifier

@@ -11,12 +11,10 @@ import androidx.navigation.navArgument
 import com.jonatbergn.core.iceandfire.android.nav.ArgKeys
 import com.jonatbergn.core.iceandfire.android.nav.Destinations
 import com.jonatbergn.core.iceandfire.android.nav.Navigation
-import com.jonatbergn.core.iceandfire.app.State
-import com.jonatbergn.core.model.Model
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 
 @Composable
 fun HouseUi(
-    model: Model<State>,
     navController: NavHostController = rememberNavController(),
     navigation: Navigation = remember { Navigation(navController) },
 ) {
@@ -25,8 +23,7 @@ fun HouseUi(
             Destinations.Houses
         ) {
             HouseListUi(
-                model = model,
-                onSelectHouseUrl = { navigation.house.invoke(it) }
+                onSelectHouseUrl = { navigation.house(it) }
             )
         }
         composable(
@@ -34,8 +31,7 @@ fun HouseUi(
             listOf(navArgument(ArgKeys.HouseUrl) { type = NavType.StringType })
         ) {
             HouseDetailsUi(
-                model = model,
-                url = requireNotNull(it.arguments?.getString(ArgKeys.HouseUrl)),
+                house = Pointer(it.arguments?.getString(ArgKeys.HouseUrl)!!),
                 onNavigateBack = { navController.popBackStack() }
             )
         }

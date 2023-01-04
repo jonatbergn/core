@@ -1,12 +1,13 @@
 package com.jonatbergn.core.iceandfire.foundation.remote
 
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
 
 /**
  * Interface to access remote resources of type [T] by either querying a single resource, or a [Page] containing
  * multiple resources.
  */
-interface Remote<T> {
+interface Remote<T : Entity> {
 
     /**
      * Query a single resource.
@@ -20,5 +21,5 @@ interface Remote<T> {
      *
      * @param url the url resolving the page of resouerces of type [T]
      */
-    suspend fun getMany(url: String): Page<T>
+    suspend fun getPage(url: String): Page<T>
 }

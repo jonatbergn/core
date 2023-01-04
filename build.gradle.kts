@@ -8,15 +8,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(Dependencies.Android.Plugin.gradle)
-        classpath(Dependencies.Jetbrains.Kotlin.Plugin.gradle)
-        classpath(Dependencies.Jonatbergn.JacocoConfig.Plugin.gradle)
+        classpath(libs.android.tools.gradle)
+        classpath(libs.kotlin.gradle)
     }
 }
 plugins {
-    id(Dependencies.GitHub.BenManes.Versions.Plugin.id) version Dependencies.GitHub.BenManes.Versions.version
-    id(Dependencies.Jonatbergn.JacocoConfig.Plugin.id) version Dependencies.Jonatbergn.JacocoConfig.version
-    kotlin("plugin.serialization") version Dependencies.Jetbrains.Kotlin.version
+    alias(libs.plugins.versions)
 }
 allprojects {
     repositories {
@@ -29,9 +26,6 @@ allprojects {
             isNonStable(candidate.version) && !isNonStable(currentVersion)
         }
     }
-}
-extensions.configure<com.jonatbergn.jacoco.JacocoConfigExtension> {
-    isCsvEnabled = false
 }
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {

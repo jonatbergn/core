@@ -6,7 +6,9 @@ kotlin {
     js(IR) {
         browser {
             commonWebpackConfig {
-                cssSupport.enabled = true
+                cssSupport {
+                    enabled = true
+                }
             }
         }
         binaries.executable()
@@ -14,16 +16,23 @@ kotlin {
 }
 dependencies {
     implementation(project(":samples:iceandfire:app"))
-    implementation(enforcedPlatform(Dependencies.Jetbrains.KotlinWrappers.bom))
-    implementation(Dependencies.Jetbrains.KotlinWrappers.ext)
-    implementation(Dependencies.Jetbrains.KotlinWrappers.react)
-    implementation(Dependencies.Jetbrains.KotlinWrappers.reactDom)
-    implementation(npm("react", "17.0.2"))
-    implementation(npm("react-dom", "17.0.2"))
-    implementation(npm("postcss", "8.2.6"))
-    implementation(npm("postcss-loader", "4.2.0")) // 5.0.0 seems not to work
-    implementation(npm("autoprefixer", "10.2.4"))
-    implementation(npm("tailwindcss", "2.0.3"))
+
+    val group = "org.jetbrains.kotlin-wrappers"
+    val bom = "$group:kotlin-wrappers-bom:1.0.0-pre.467"
+    val ext = "$group:kotlin-extensions"
+    val react = "$group:kotlin-react"
+    val reactDom = "$group:kotlin-react-dom"
+    implementation(enforcedPlatform(bom))
+    implementation(ext)
+    implementation(react)
+    implementation(reactDom)
+
+    implementation(npm("react", "18.2.0"))
+    implementation(npm("react-dom", "18.2.0"))
+    implementation(npm("postcss", "8.4.20"))
+    implementation(npm("postcss-loader", "7.0.2"))
+    implementation(npm("autoprefixer", "10.4.13"))
+    implementation(npm("tailwindcss", "3.2.4"))
 }
 
 val copyTailwindConfig = tasks.register<Copy>("copyTailwindConfig") {
@@ -43,10 +52,4 @@ val copyPostcssConfig = tasks.register<Copy>("copyPostcssConfig") {
 tasks.named("processResources") {
     dependsOn(copyTailwindConfig)
     dependsOn(copyPostcssConfig)
-}
-
-afterEvaluate {
-    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackDevServer.version = "4.0.0"
-    }
 }

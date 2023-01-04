@@ -1,37 +1,40 @@
 package com.jonatbergn.core.iceandfire.foundation.local
 
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Companion.pointer
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
 import com.jonatbergn.core.iceandfire.foundation.entity.PageCollection
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.datetime.Clock
 
 /**
  * @param clock the [Clock] used for creation timestamps
  */
-class LocalImpl<T : Entity>(
-    private val clock: Clock = Clock.System,
-) : Local<T> {
+class LocalImpl<T : Entity> : Local<T> {
 
-    private var startPage: Page<T>? = null
+    //todo make this threadsafe
+    override var all = persistentMapOf<Pointer<T>, T>()
+
     private val morePages = mutableSetOf<Page<T>>()
-    private val entities = mutableMapOf<String, T>()
-    override val pageFlow = MutableStateFlow(PageCollection<T>(clock.now(), null, emptySet()))
+    private var startPage: Page<T>? = null
 
-    private fun modify(block: () -> Unit) {
-        block()
-        notifyChanged()
+    override val pages: PageCollection<T>?
+        get() {
+            return PageCollection(
+                start = startPage ?: return null,
+                more = morePages,
+            )
+        }
+
+    override fun get(url: String) = all[Pointer(url)]
+
+    override fun put(entity: T) {
+        all = all.put(entity.pointer, entity)
     }
 
-    private fun Page<T>.unpack() {
-        entities.putAll(data.associateBy { it.url })
-        if (startPage == null) startPage = this else morePages.add(this)
-    }
-
-    override fun get(url: String): T? = entities[url]
-    override fun put(entity: T) = modify { entities[entity.url] = entity }
-    override fun put(page: Page<T>) = modify { page.unpack() }
-    override fun notifyChanged() {
-        pageFlow.value = PageCollection(clock.now(), startPage, morePages)
+    override fun put(page: Page<T>) {
+        all = all.putAll(page.associateBy { it.pointer })
+        if (startPage == null) startPage = page else morePages.add(page)
     }
 }
