@@ -10,8 +10,9 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.uiTooling)
-    implementation(libs.androidx.navigation.copose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.ktor.client.okhttp)
+    implementation(libs.kotlinx.collections.immutable)
     coreLibraryDesugaring(libs.android.tools.desugarJdk)
 }
 android {
@@ -29,8 +30,8 @@ android {
     buildToolsVersion = libs.versions.android.build.tools.get()
     compileSdkVersion = libs.versions.android.build.sdk.compile.get()
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
     }
     packagingOptions {

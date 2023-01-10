@@ -6,7 +6,6 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respondError
 import io.ktor.client.engine.mock.respondOk
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,7 +39,7 @@ class RemoteTest {
             Page(
                 "http://localhost/bird",
                 null,
-                persistentListOf("get-many/bird"),
+                listOf("get-many/bird"),
             ),
             remote.getPage("http://localhost/bird")
         )

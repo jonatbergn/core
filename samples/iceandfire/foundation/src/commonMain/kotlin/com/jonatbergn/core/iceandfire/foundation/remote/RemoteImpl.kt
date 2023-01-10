@@ -6,7 +6,6 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Headers
 import io.ktor.http.isSuccess
-import kotlinx.collections.immutable.toImmutableList
 
 /**
  * An implementation of [Remote] using [HttpClient] to retrieve resources.
@@ -21,16 +20,20 @@ class RemoteImpl<T>(
     private val decodeMany: (String) -> List<T>,
 ) : Remote<T> {
 
-    private suspend operator fun <T> String.invoke(block: suspend String.(Headers) -> T): T =
-        client.get(this).run {
-            if (status.isSuccess()) bodyAsText().block(headers) else error("Failed to GET $this")
+    private suspend fun <Result> get(
+        url: String,
+        block: suspend (Headers, String) -> Result,
+    ): Result = client.get(url).run {
+        if (status.isSuccess()) {
+            block(headers, bodyAsText())
+        } else {
+            error("Failed to GET $this")
         }
-
-    override suspend fun getOne(url: String) = url {
-        decodeOne(this)
     }
 
-    override suspend fun getPage(url: String) = url {
-        Page(url, it.link().next, decodeMany(this).toImmutableList())
+    override suspend fun getOne(url: String) = get(url) { _, body -> decodeOne(body) }
+
+    override suspend fun getPage(url: String) = get(url) { headers, body ->
+        Page(url = url, next = headers.link().next, data = decodeMany(body))
     }
 }

@@ -5,31 +5,30 @@ import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Companion.pointer
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
 import com.jonatbergn.core.iceandfire.foundation.entity.Repo
-import kotlinx.collections.immutable.PersistentList
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
 
 class FakeRepo<T : Entity>(
     val onHasMorePagesToFetch: () -> Boolean = { false },
-    val onFetchNextPage: suspend () -> Page<T> = { throw NotImplementedError() },
+    val onFetchNextPage: suspend () -> Page<T>? = { throw NotImplementedError() },
     val onFetch: suspend (Pointer<T>) -> T = { throw NotImplementedError() },
-    override var entities: PersistentMap<Pointer<T>, T> = persistentMapOf()
+    override val entities: MutableMap<Pointer<T>, T> = mutableMapOf()
 ) : Repo<T> {
 
-    override var pages: PersistentList<Page<T>> = persistentListOf()
+    private val pagesCache = mutableListOf<Page<T>>()
+
+    override fun pages() = pagesCache
 
     override val hasMorePagesToFetch get() = onHasMorePagesToFetch()
 
-    override suspend fun fetchNextPage() {
-        val page = onFetchNextPage()
-        pages = pages.add(page)
-        page.forEach { entities = entities.put(it.pointer, it) }
+    override suspend fun fetchNextPage(): Page<T>? {
+        val page = onFetchNextPage() ?: return null
+        pagesCache.add(page)
+        entities.putAll(page.associateBy { it.pointer })
+        return page
     }
 
     override suspend fun fetch(pointer: Pointer<T>): T {
         val entity = onFetch(pointer)
-        entities = entities.put(pointer, entity)
+        entities[pointer] = entity
         return entity
     }
 }

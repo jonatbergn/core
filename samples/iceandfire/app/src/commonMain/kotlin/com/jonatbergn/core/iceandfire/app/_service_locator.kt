@@ -10,20 +10,18 @@ import com.jonatbergn.core.iceandfire.app.house.House
 import com.jonatbergn.core.iceandfire.app.house.HouseDto
 import com.jonatbergn.core.iceandfire.app.house.asHouse
 import com.jonatbergn.core.iceandfire.app.house.asHouseList
+import com.jonatbergn.core.iceandfire.app.state.State
 import com.jonatbergn.core.iceandfire.foundation.entity.Repo
 import com.jonatbergn.core.iceandfire.foundation.entity.RepoImpl
 import com.jonatbergn.core.iceandfire.foundation.local.LocalImpl
 import com.jonatbergn.core.iceandfire.foundation.remote.RemoteImpl
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestRetry
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.HttpTimeout.Plugin.INFINITE_TIMEOUT_MS
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.decodeFromString
@@ -31,16 +29,16 @@ import kotlinx.serialization.json.Json
 
 interface AppModule {
 
-    val backgroundDispatcher: CoroutineDispatcher
+    val dispatcher: CoroutineDispatcher
     val iceAndFireUrl: String
 
     companion object Factory {
 
         operator fun invoke(
-            backgroundDispatcher: CoroutineDispatcher,
+            dispatcher: CoroutineDispatcher,
             url: String = "https://www.anapioficeandfire.com/api",
         ): AppModule = AppModuleImpl(
-            backgroundDispatcher = backgroundDispatcher,
+            dispatcher = dispatcher,
             iceAndFireUrl = url,
         )
     }
@@ -62,7 +60,7 @@ interface AppContext : AppModule {
 }
 
 private class AppModuleImpl(
-    override val backgroundDispatcher: CoroutineDispatcher,
+    override val dispatcher: CoroutineDispatcher,
     override val iceAndFireUrl: String,
 ) : AppModule
 
@@ -71,20 +69,9 @@ private class AppContextImpl(
 ) : AppContext, AppModule by module {
 
     private val client = HttpClient {
-        /**
-         * Not all platform http engines support timeouts.
-         * In order to ensure the same behaviour on all platforms,
-         * timeouts will be effective disabled by setting timeouts
-         * to `INFINITE_TIMEOUT_MS`.
-         */
-        install(HttpTimeout) {
-            requestTimeoutMillis = INFINITE_TIMEOUT_MS
-            connectTimeoutMillis = INFINITE_TIMEOUT_MS
-            socketTimeoutMillis = INFINITE_TIMEOUT_MS
-        }
         install(HttpRequestRetry) {
             delayMillis { 1_000L }
-            retryOnExceptionIf { _, cause -> cause is IOException }
+            retryOnException()
         }
         defaultRequest {
             accept(ContentType("application", "vnd.anapioficeandfire+json").withParameter("version", "1"))
@@ -109,21 +96,16 @@ private class AppContextImpl(
     override val state = MutableStateFlow(State())
 
     override val houseRepo = RepoImpl(
-        backgroundDispatcher,
+        dispatcher,
         localHouses,
         remoteHouses,
     ) { "${api(iceAndFireUrl).houses}?page=1&pageSize=15" }
 
     override val characterRepo = RepoImpl(
-        backgroundDispatcher,
+        dispatcher,
         localCharacters,
         remoteCharacters,
     ) {
-        "${api(iceAndFireUrl).characters}?page=1&p ageSize=15"
+        "${api(iceAndFireUrl).characters}?page=1&pageSize=15"
     }
-
-//    override val fetchGrossHouseDependents = fetchHouseDependents.copy(
-//        characters = { listOf(currentLord) },
-//        houses = { listOf(overlord) },
-//    )
 }

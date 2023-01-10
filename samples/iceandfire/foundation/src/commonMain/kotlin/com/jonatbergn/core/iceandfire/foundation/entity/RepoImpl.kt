@@ -3,7 +3,6 @@ package com.jonatbergn.core.iceandfire.foundation.entity
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 import com.jonatbergn.core.iceandfire.foundation.local.Local
 import com.jonatbergn.core.iceandfire.foundation.remote.Remote
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.invoke
 
@@ -20,20 +19,20 @@ class RepoImpl<T : Entity>(
     private val local: Local<T>,
     private val remote: Remote<T>,
     private val first: suspend () -> String,
-) : Repo<T>, Map<Pointer<T>, T> by local.all {
+) : Repo<T> {
 
-    override val entities by local::all
+    override val entities = local.all
 
-    override val pages get() = local.pages?.toImmutableList()
+    override fun pages() = local.pages()
 
     override val hasMorePagesToFetch
-        get() = when (val pages = local.pages) {
+        get() = when (val pages = local.pages()) {
             null -> true
             else -> pages.last().next != null
         }
 
-    override suspend fun fetchNextPage(): Unit = dispatcher {
-        when (val pages = local.pages) {
+    override suspend fun fetchNextPage() = dispatcher {
+        when (val pages = local.pages()) {
             null -> remote.getPage(first())
             else -> when (val next = pages.last().next) {
                 null -> null
@@ -45,6 +44,4 @@ class RepoImpl<T : Entity>(
     override suspend fun fetch(pointer: Pointer<T>) = dispatcher {
         local[pointer.url] ?: remote.getOne(pointer.url).also(local::put)
     }
-
-    override fun get(pointer: Pointer<T>) = local[pointer.url]
 }

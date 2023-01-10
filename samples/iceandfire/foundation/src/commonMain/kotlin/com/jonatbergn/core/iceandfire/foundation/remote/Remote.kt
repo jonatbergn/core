@@ -18,7 +18,7 @@ interface Remote<T> {
     /**
      * Query a page of resources
      *
-     * @param url the url resolving the page of resouerces of type [T]
+     * @param url the url resolving the page of resources of type [T]
      */
     suspend fun getPage(url: String): Page<T>
 }

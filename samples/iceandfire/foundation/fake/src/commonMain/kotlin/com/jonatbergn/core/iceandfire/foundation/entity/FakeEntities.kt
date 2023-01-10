@@ -1,6 +1,5 @@
 package com.jonatbergn.core.iceandfire.foundation.entity
 
-import kotlinx.collections.immutable.persistentListOf
 import kotlin.jvm.JvmInline
 
 object FakeEntities {
@@ -16,19 +15,19 @@ object FakeEntities {
     private val entity06: Entity = FakeEntity("entity06")
 
     val page03 = Page(
-        url = "page03", next = null, data = persistentListOf(
+        url = "page03", next = null, data = listOf(
             entity05,
             entity06,
         )
     )
     val page02 = Page(
-        url = "page02", next = page03.url, data = persistentListOf(
+        url = "page02", next = page03.url, data = listOf(
             entity03,
             entity04,
         )
     )
     val page01 = Page(
-        url = "page01", next = page02.url, persistentListOf(
+        url = "page01", next = page02.url, listOf(
             entity01,
             entity02,
         )

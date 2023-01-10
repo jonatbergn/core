@@ -14,7 +14,6 @@ kotlin {
             dependencies {
                 api(project(":core"))
                 api(libs.kotlinx.serialization.json)
-                api(libs.kotlinx.collections.immutable)
                 implementation(libs.bundles.ktorClientCommon)
             }
         }

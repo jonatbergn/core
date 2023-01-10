@@ -11,29 +11,24 @@ import androidx.compose.material.Card
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.jonatbergn.core.iceandfire.android.App.Companion.store
 import com.jonatbergn.core.iceandfire.android.PageLoadingIndicator
+import com.jonatbergn.core.iceandfire.android.UiState.Factory.asUiState
 import com.jonatbergn.core.iceandfire.app.AppStore
-import com.jonatbergn.core.iceandfire.app.states.HouseGrossState
-import com.jonatbergn.core.iceandfire.app.states.HouseListState
 import kotlinx.coroutines.launch
 
 @Composable
 private fun HouseListItem(
-    state: HouseGrossState,
-    onSelectUrl: (String) -> Unit,
+    state: HouseGrossUiState,
+    onSelectHouseUrl: (String) -> Unit,
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Spacer(Modifier.height(8.dp))
-        Card { HouseGrossUi(state = state, onSelectUrl = onSelectUrl) }
+        Card { HouseGrossUi(state = state, onSelectUrl = onSelectHouseUrl) }
     }
 }
 
@@ -44,7 +39,7 @@ fun HouseListUi(
 ) {
     val scope = rememberCoroutineScope()
     HouseListUi(
-        state = store.state.collectAsState().value.grossHouseList(),
+        state = store.state.collectAsState().value.asUiState.houseList,
         onLoadNext = { scope.launch { store.loadNextHousePage() } },
         onSelectHouseUrl = onSelectHouseUrl,
     )
@@ -56,7 +51,7 @@ fun HouseListUi(
  */
 @Composable
 fun HouseListUi(
-    state: HouseListState,
+    state: HouseListUiState,
     onLoadNext: () -> Unit,
     onSelectHouseUrl: (String) -> Unit,
 ) = with(state) {
@@ -78,7 +73,7 @@ fun HouseListUi(
             items(houses) { item ->
                 HouseListItem(
                     state = item,
-                    onSelectUrl = onSelectHouseUrl,
+                    onSelectHouseUrl = onSelectHouseUrl,
                 )
             }
             item {

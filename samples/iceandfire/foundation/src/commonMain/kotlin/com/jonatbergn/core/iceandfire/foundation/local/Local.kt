@@ -1,18 +1,17 @@
 package com.jonatbergn.core.iceandfire.foundation.local
 
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity
+import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Pointer
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
-import com.jonatbergn.core.iceandfire.foundation.entity.PageCollection
-import kotlinx.collections.immutable.ImmutableMap
 
 /**
  * Interface to access local resources of type [T].
  */
 interface Local<T : Entity> {
 
-    val pages: PageCollection<T>?
+    fun pages(): Iterable<Page<T>>?
 
-    val all: ImmutableMap<Entity.Pointer<T>, T>
+    val all: Map<Pointer<T>, T>
 
     /**
      * @param url the identifier of a resource

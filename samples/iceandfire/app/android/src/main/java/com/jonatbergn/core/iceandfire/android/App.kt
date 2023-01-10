@@ -2,7 +2,6 @@ package com.jonatbergn.core.iceandfire.android
 
 import android.app.Application
 import android.content.Context
-import com.jonatbergn.core.iceandfire.android.App.Companion.store
 import com.jonatbergn.core.iceandfire.app.AppContext
 import com.jonatbergn.core.iceandfire.app.AppModule
 import com.jonatbergn.core.iceandfire.app.AppStore
@@ -14,8 +13,8 @@ import kotlinx.coroutines.launch
 
 class App : Application() {
 
+    private val store = AppStore(AppContext(AppModule(IO)))
     private val scope = CoroutineScope(Main)
-    private val store by lazy { AppStore(AppContext(AppModule(IO))) }
 
     override fun onTerminate() {
         super.onTerminate()

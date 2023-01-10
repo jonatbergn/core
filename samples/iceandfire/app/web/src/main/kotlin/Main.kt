@@ -1,6 +1,7 @@
 import com.jonatbergn.core.iceandfire.app.AppContext
 import com.jonatbergn.core.iceandfire.app.AppModule
 import kotlinext.js.require
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import react.FC
 import react.Fragment
@@ -21,11 +22,11 @@ import web.dom.document
 
 fun main() {
     require("./app.css")
-    val appContext = AppContext(AppModule(Default))
+    val appContext = AppContext(AppModule(CoroutineScope(Default)))
     val container = requireNotNull(document.getElementById("root"))
     createRoot(container).render(Fragment.create {
         FC<Props> {
-            val state = appContext.state.collectAsViewState().grossHouseList()
+            val state = appContext.state.collectAsViewState().houseListState()
             div {
                 style {
                     +"flex flex-col"
