@@ -13,7 +13,7 @@ import kotlinx.datetime.Clock
  */
 class LocalImpl<T : Entity> : Local<T> {
 
-    //todo make this threadsafe
+    //todo make this threadsafe?
     override var all = persistentMapOf<Pointer<T>, T>()
 
     private val morePages = mutableSetOf<Page<T>>()
