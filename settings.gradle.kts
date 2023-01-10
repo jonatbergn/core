@@ -1,6 +1,6 @@
 include(":core")
 include(":samples:iceandfire:foundation")
-include(":samples:iceandfire:foundation:mock")
+include(":samples:iceandfire:foundation:fake")
 include(":samples:iceandfire:app")
 include(":samples:iceandfire:app:android")
 include(":samples:iceandfire:app:fake")

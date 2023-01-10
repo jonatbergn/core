@@ -32,7 +32,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(project(":samples:iceandfire:foundation:mock"))
+                implementation(project(":samples:iceandfire:foundation:fake"))
                 implementation(project(":samples:iceandfire:app:fake"))
                 implementation(libs.bundles.testCommon)
             }

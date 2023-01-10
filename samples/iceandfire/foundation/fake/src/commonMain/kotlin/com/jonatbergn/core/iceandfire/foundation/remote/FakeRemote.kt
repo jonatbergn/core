@@ -1,10 +1,9 @@
-package com.jonatbergn.core.iceandfire.foundation.mock.remote
+package com.jonatbergn.core.iceandfire.foundation.remote
 
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
-import com.jonatbergn.core.iceandfire.foundation.remote.Remote
 
-class MockRemote<T : Entity>(
+class FakeRemote<T : Entity>(
     var onGetOne: suspend (String) -> T = { throw NotImplementedError() },
     var onGetMany: suspend (String) -> Page<T> = { throw NotImplementedError() },
 ) : Remote<T> {

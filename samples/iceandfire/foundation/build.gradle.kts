@@ -20,7 +20,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(project(":samples:iceandfire:foundation:mock"))
+                implementation(project(":samples:iceandfire:foundation:fake"))
                 implementation(libs.bundles.testCommon)
                 implementation(libs.kotlin.test.junit)
                 implementation(libs.ktor.client.mock)

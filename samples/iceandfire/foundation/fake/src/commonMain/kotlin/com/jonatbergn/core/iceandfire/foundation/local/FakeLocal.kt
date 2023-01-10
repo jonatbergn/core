@@ -1,12 +1,11 @@
-package com.jonatbergn.core.iceandfire.foundation.mock.local
+package com.jonatbergn.core.iceandfire.foundation.local
 
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
 import com.jonatbergn.core.iceandfire.foundation.entity.PageCollection
-import com.jonatbergn.core.iceandfire.foundation.local.Local
 import kotlinx.collections.immutable.ImmutableMap
 
-class MockLocal<T : Entity>(
+class FakeLocal<T : Entity>(
     override var pages: PageCollection<T>? = null,
 ) : Local<T> {
     override val all: ImmutableMap<Entity.Pointer<T>, T> = throw NotImplementedError()

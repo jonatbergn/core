@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.jonatbergn.core.iceandfire.app.State
 import com.jonatbergn.core.iceandfire.app.house.FakeHouses.housePages
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Companion.pointer
-import com.jonatbergn.core.iceandfire.foundation.mock.repo.MockRepo
+import com.jonatbergn.core.iceandfire.foundation.repo.FakeRepo
 import io.kotest.matchers.shouldBe
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
@@ -17,7 +17,7 @@ class LoadNextHousePageTest {
 
     private val state = MutableStateFlow(State())
     private val pageIterator = housePages.iterator()
-    private val houseRepo = MockRepo(
+    private val houseRepo = FakeRepo(
         onHasMorePagesToFetch = pageIterator::hasNext,
         onFetchNextPage = pageIterator::next,
         onFetch = { pointer -> housePages.flatten().first { it.pointer == pointer } }
@@ -25,7 +25,7 @@ class LoadNextHousePageTest {
     private val loadNextHousePage = LoadNextHousePage(
         state = state,
         houseRepo = houseRepo,
-        characterRepo = MockRepo()
+        characterRepo = FakeRepo()
     )
 
     @Test

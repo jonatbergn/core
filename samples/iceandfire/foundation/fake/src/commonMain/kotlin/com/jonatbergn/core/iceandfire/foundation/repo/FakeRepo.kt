@@ -1,4 +1,4 @@
-package com.jonatbergn.core.iceandfire.foundation.mock.repo
+package com.jonatbergn.core.iceandfire.foundation.repo
 
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity
 import com.jonatbergn.core.iceandfire.foundation.entity.Entity.Companion.pointer
@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 
-class MockRepo<T : Entity>(
+class FakeRepo<T : Entity>(
     val onHasMorePagesToFetch: () -> Boolean = { false },
     val onFetchNextPage: suspend () -> Page<T> = { throw NotImplementedError() },
     val onFetch: suspend (Pointer<T>) -> T = { throw NotImplementedError() },
