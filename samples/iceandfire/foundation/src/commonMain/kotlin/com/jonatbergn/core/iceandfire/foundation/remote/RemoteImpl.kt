@@ -1,6 +1,5 @@
 package com.jonatbergn.core.iceandfire.foundation.remote
 
-import com.jonatbergn.core.iceandfire.foundation.entity.Entity
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
@@ -16,7 +15,7 @@ import kotlinx.collections.immutable.toImmutableList
  * @param decodeOne closure used to decode a [String] to [T]\
  * @param decodeMany closure used to decode a [List] of [Strings] to [List] of [T]
  */
-class RemoteImpl<T : Entity>(
+class RemoteImpl<T>(
     private val client: HttpClient,
     private val decodeOne: (String) -> T,
     private val decodeMany: (String) -> List<T>,

@@ -1,13 +1,12 @@
 package com.jonatbergn.core.iceandfire.foundation.remote
 
-import com.jonatbergn.core.iceandfire.foundation.entity.Entity
 import com.jonatbergn.core.iceandfire.foundation.entity.Page
 
 /**
  * Interface to access remote resources of type [T] by either querying a single resource, or a [Page] containing
  * multiple resources.
  */
-interface Remote<T : Entity> {
+interface Remote<T> {
 
     /**
      * Query a single resource.
