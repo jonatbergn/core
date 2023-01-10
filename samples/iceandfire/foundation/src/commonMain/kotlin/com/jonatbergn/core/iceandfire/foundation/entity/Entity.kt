@@ -16,11 +16,15 @@ interface Entity {
 
         companion object Factory {
 
-            operator fun <T : Entity> invoke(url: String?): Pointer<T>? =
-                url.takeUnless { it.isNullOrBlank() }?.let(::Pointer)
+            operator fun <T : Entity> invoke(
+                url: String?,
+            ): Pointer<T>? {
+                return Pointer(url.takeUnless { it.isNullOrBlank() } ?: return null)
+            }
 
-            operator fun <T : Entity> invoke(urls: List<String>?): List<Pointer<T>>? =
-                urls?.map(::Pointer)
+            operator fun <T : Entity> invoke(
+                urls: List<String>?,
+            ): List<Pointer<T>>? = urls?.mapNotNull { Factory(it) }
         }
     }
 
